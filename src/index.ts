@@ -4,15 +4,17 @@ dotenv.config();
 import client from "./contentstack-client";
 import crypto from "crypto";
 
+const TOTAL_ENTRIES = 10_000;
+
 /*
-https://www.contentstack.com/docs/developers/apis/content-management-api/#rate-limiting
-Read (GET) requests: 10 requests per second per organization
-Write (POST/PUT/DELETE) requests: 10 requests per second per organization
+  https://www.contentstack.com/docs/developers/apis/content-management-api/#rate-limiting
+  Read (GET) requests: 10 requests per second per organization
+  Write (POST/PUT/DELETE) requests: 10 requests per second per organization
+  Be careful modifying the following parameters!
 */
 const BATCH_SIZE = 5; // could be 10 but prefer to be safe
-const BATCH_INTERVAL_MS = 5000; // could be 1000 but prefer to be safe
-const TOTAL_ENTRIES = 100;
-const TEST_ENTRIES_INTERVAL = 10;
+const BATCH_INTERVAL_MS = 1_500; // could be 1000 but prefer to be safe
+const TEST_ENTRIES_INTERVAL = 1_000;
 
 async function main() {
   const contentTypeTitle = "stress test 123";

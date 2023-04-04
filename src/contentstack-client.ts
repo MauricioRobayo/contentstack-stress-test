@@ -171,6 +171,26 @@ export class ContentstackClient {
 
     return response.json();
   }
+
+  async getEntry({
+    entryUid,
+    locale = "",
+  }: {
+    entryUid: string;
+    locale?: string;
+  }) {
+    this.headers.append("access_token", this.deliveryToken);
+
+    const response = await fetch(
+      `${this.apiBaseUrl}/content_types/json_test_123/entries/${entryUid}?environment=development&locale=${locale}`,
+      {
+        method: "GET",
+        headers: this.headers,
+      }
+    );
+
+    return response.json();
+  }
 }
 
 export default new ContentstackClient({

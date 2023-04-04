@@ -12,14 +12,15 @@ Write (POST/PUT/DELETE) requests: 10 requests per second per organization
 const BATCH_SIZE = 5; // could be 10 but prefer to be safe
 const BATCH_INTERVAL_MS = 1500; // could be 1000 but prefer to be safe
 const TOTAL_ENTRIES = 20;
-const TEST_RESPONSE_INTERVAL = 5;
+const TEST_RESPONSE_INTERVAL = 10;
 
 async function main() {
   const contentTypeTitle = "stress test 123";
   const contentTypeResult = await client.createContentType(contentTypeTitle);
   const contentTypeUid = contentTypeResult.content_type.uid;
-  const batch = [];
-  for (let i = 0; i < TOTAL_ENTRIES; i++) {
+  let batch = [];
+  let batchResult = [];
+  for (let i = 1; i <= TOTAL_ENTRIES; i++) {
     const entryTitle = `${contentTypeTitle}-${crypto.randomUUID()}`;
     batch.push(
       client.createEntry({
@@ -28,17 +29,19 @@ async function main() {
       })
     );
 
-    let batchResult = [];
     if (batch.length >= BATCH_SIZE) {
       batchResult = await Promise.all(batch);
       await sleep(BATCH_INTERVAL_MS);
-      batch.length = 0;
+      batch = [];
     }
 
-    if ((i + 1) % TEST_RESPONSE_INTERVAL === 0) {
-      console.log(batch);
+    if (batchResult.length > 0 && i % TEST_RESPONSE_INTERVAL === 0) {
       const entryUid = batchResult[0].entry.uid;
-      console.log(await getEntryResponseTime({ entryUid }));
+      const responseTimeWithoutCache = await getEntryResponseTime({ entryUid });
+      const responseTimeWithCache = await getEntryResponseTime({ entryUid });
+      console.log("Entries", i);
+      console.log("Response time without cache", responseTimeWithoutCache);
+      console.log("Response time with cache", responseTimeWithCache);
     }
   }
 

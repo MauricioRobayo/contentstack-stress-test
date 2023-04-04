@@ -77,10 +77,11 @@ export class ContentstackClient {
         },
       },
     });
-    this.headers.append("authorization", this.managementToken);
+    const headers = new Headers(this.headers);
+    headers.append("authorization", this.managementToken);
     const response = await fetch(`${this.apiBaseUrl}/content_types`, {
       method: "POST",
-      headers: this.headers,
+      headers: headers,
       body: payload,
     });
 
@@ -159,12 +160,14 @@ export class ContentstackClient {
         },
       },
     });
+    const headers = new Headers(this.headers);
+    headers.append("authorization", this.managementToken);
 
     const response = await fetch(
       `${this.apiBaseUrl}/content_types/${contentTypeUid}/entries?locale=${locale}`,
       {
         method: "POST",
-        headers: this.headers,
+        headers,
         body: payload,
       }
     );
@@ -179,13 +182,14 @@ export class ContentstackClient {
     entryUid: string;
     locale?: string;
   }) {
-    this.headers.append("access_token", this.deliveryToken);
+    const headers = new Headers(this.headers);
+    headers.append("access_token", this.deliveryToken);
 
     const response = await fetch(
       `${this.apiBaseUrl}/content_types/json_test_123/entries/${entryUid}?environment=development&locale=${locale}`,
       {
         method: "GET",
-        headers: this.headers,
+        headers,
       }
     );
 

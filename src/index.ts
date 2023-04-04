@@ -10,9 +10,9 @@ Read (GET) requests: 10 requests per second per organization
 Write (POST/PUT/DELETE) requests: 10 requests per second per organization
 */
 const BATCH_SIZE = 5; // could be 10 but prefer to be safe
-const BATCH_INTERVAL_MS = 1500; // could be 1000 but prefer to be safe
-const TOTAL_ENTRIES = 20;
-const TEST_RESPONSE_INTERVAL = 10;
+const BATCH_INTERVAL_MS = 5000; // could be 1000 but prefer to be safe
+const TOTAL_ENTRIES = 100;
+const TEST_ENTRIES_INTERVAL = 10;
 
 async function main() {
   const contentTypeTitle = "stress test 123";
@@ -35,7 +35,7 @@ async function main() {
       batch = [];
     }
 
-    if (batchResult.length > 0 && i % TEST_RESPONSE_INTERVAL === 0) {
+    if (batchResult.length > 0 && i % TEST_ENTRIES_INTERVAL === 0) {
       const entryUid = batchResult[0].entry.uid;
       const responseTimeWithoutCache = await getEntryResponseTime({ entryUid });
       const responseTimeWithCache = await getEntryResponseTime({ entryUid });

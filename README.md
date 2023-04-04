@@ -1,6 +1,6 @@
 Create a delivery token and a management token and add them to your `.env`. Check [`.env.sample`](./.env.sample)
 
-Install dependencies and run the `start` script: `yarn start`.
+Install dependencies and run the `start` script: `yarn start` or your preferred package manager.
 
 The script will create a webpage entry type with a `JSON rte` field, and then will start creating entries in batches.
 

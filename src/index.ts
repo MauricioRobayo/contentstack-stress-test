@@ -4,7 +4,7 @@ dotenv.config();
 import client from "./contentstack-client";
 import crypto from "crypto";
 
-const TOTAL_ENTRIES = 100;
+const TOTAL_ENTRIES = 10_000;
 
 /*
   https://www.contentstack.com/docs/developers/apis/content-management-api/#rate-limiting
@@ -14,7 +14,7 @@ const TOTAL_ENTRIES = 100;
 */
 const BATCH_SIZE = 5; // could be 10 but prefer to be safe
 const BATCH_INTERVAL_MS = 1_500; // could be 1000 but prefer to be safe
-const TEST_ENTRIES_INTERVAL = 10;
+const FETCH_ENTRY_AFTER = 200;
 
 async function main() {
   const contentTypeTitle = "stress test 123";
@@ -44,11 +44,22 @@ async function main() {
 
     if (batch.length >= BATCH_SIZE) {
       batchResult = await Promise.all(batch);
+      const publishResult = await Promise.all(
+        batchResult.map((result) =>
+          client.publishEntry({
+            entryUid: result.entry.uid,
+            contentTypeUid,
+            environment: "development",
+            locale: "en-us",
+          })
+        )
+      );
+
       await sleep(BATCH_INTERVAL_MS);
       batch = [];
     }
 
-    if (batchResult.length > 0 && i % TEST_ENTRIES_INTERVAL === 0) {
+    if (batchResult.length > 0 && i % FETCH_ENTRY_AFTER === 0) {
       const entryUid = batchResult.at(-1).entry.uid;
       const responseTimeWithoutCache = await getEntryResponseTime({
         entryUid,
@@ -80,7 +91,6 @@ async function getEntryResponseTime(options: {
 }) {
   const start = performance.now();
   const data = await client.getEntry(options);
-  console.log(options, JSON.stringify(data, null, 2));
   if ("error_code" in data) {
     console.log(JSON.stringify(data, null, 2));
     throw new Error(`Failed to fetch entry ${options.entryUid}`);

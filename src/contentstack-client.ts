@@ -176,6 +176,40 @@ export class ContentstackClient {
     return response.json();
   }
 
+  async publishEntry({
+    contentTypeUid,
+    entryUid,
+    environment,
+    locale,
+  }: {
+    contentTypeUid: string;
+    entryUid: string;
+    environment: string;
+    locale: string;
+  }) {
+    const payload = JSON.stringify({
+      entry: {
+        environments: [environment],
+        locales: [locale],
+      },
+      locale: locale,
+      version: 1,
+    });
+    const headers = new Headers(this.headers);
+    headers.append("authorization", this.managementToken);
+
+    const response = await fetch(
+      `${this.apiBaseUrl}/content_types/${contentTypeUid}/entries/${entryUid}/publish`,
+      {
+        method: "POST",
+        headers,
+        body: payload,
+      }
+    );
+
+    return response.json();
+  }
+
   async getEntry({
     entryUid,
     contentTypeUid,

@@ -72,7 +72,7 @@ export async function publishEntries({
           })
         )
       );
-      console.log(`Total entries: ${totalEntries}`);
+      console.log(`Total entries created: ${totalEntries}`);
       await sleep(BATCH_INTERVAL_MS);
       batch = [];
     }

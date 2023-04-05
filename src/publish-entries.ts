@@ -2,7 +2,6 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 import client from "./contentstack-client";
-import crypto from "crypto";
 
 /*
   https://www.contentstack.com/docs/developers/apis/content-management-api/#rate-limiting
@@ -17,7 +16,7 @@ export async function publishEntries({
   total,
   contentTypeTitle,
   onEvery,
-  onFinish,
+  logProgress = true,
 }: {
   total: number;
   contentTypeTitle: string;
@@ -29,7 +28,7 @@ export async function publishEntries({
       entriesSoFar: number
     ) => Promise<void>;
   };
-  onFinish?: () => void;
+  logProgress?: boolean;
 }) {
   const contentTypeUid = contentTypeTitle.replace(/\s+/g, "-");
   const contentTypeResult = await client.createContentType({
@@ -38,7 +37,7 @@ export async function publishEntries({
   });
   if ("error_code" in contentTypeResult) {
     if (contentTypeResult.error_code === 115) {
-      console.log(`Content type '${contentTypeUid}' already exists.`);
+      throw new Error(`Content type '${contentTypeUid}' already exists.`);
     } else {
       console.log(JSON.stringify(contentTypeResult, null, 2));
       throw new Error("Failed to create content type");
@@ -49,7 +48,7 @@ export async function publishEntries({
   let totalEntries = 0;
 
   for (let i = 1; i <= total; i++) {
-    const entryTitle = `${contentTypeUid}-${crypto.randomUUID()}`;
+    const entryTitle = `${contentTypeUid}-${i}`;
     batch.push(
       client.createEntry({
         title: entryTitle,
@@ -72,7 +71,9 @@ export async function publishEntries({
           })
         )
       );
-      console.log(`Total entries created: ${totalEntries}`);
+      if (logProgress) {
+        console.log(`Total entries created: ${totalEntries}`);
+      }
       await sleep(BATCH_INTERVAL_MS);
       batch = [];
     }
@@ -88,9 +89,6 @@ export async function publishEntries({
     await Promise.all(batch);
   }
 
-  if (onFinish) {
-    onFinish();
-  }
   process.exit(0);
 }
 

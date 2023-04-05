@@ -1,18 +1,14 @@
 import { publishEntries } from "./publish-entries";
 import client from "./contentstack-client";
 
-const results: any[] = [];
-
 publishEntries({
   total: 50_000,
   contentTypeTitle: "st-123",
-  // onEvery: {
-  //   entries: 200,
-  //   fn: onEveryFn,
-  // },
-  // onFinish: () => {
-  //   console.log(results);
-  // },
+  onEvery: {
+    entries: 200,
+    fn: onEveryFn,
+  },
+  logProgress: false,
 });
 
 async function onEveryFn(
@@ -29,12 +25,9 @@ async function onEveryFn(
     entryUid: lastEntryUid,
     contentTypeUid,
   });
-  results.push({
-    lastEntryUid,
-    entriesSoFar,
-    responseTimeWithoutCache,
-    responseTimeWithCache,
-  });
+  console.log(
+    `${lastEntryUid},${entriesSoFar},${responseTimeWithoutCache},${responseTimeWithCache}`
+  );
 }
 
 async function getEntryResponseTime(options: {

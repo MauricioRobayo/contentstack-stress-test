@@ -223,7 +223,7 @@ export class ContentstackClient {
     headers.append("access_token", this.deliveryToken);
 
     const response = await fetch(
-      `${this.apiBaseUrl}/content_types/${contentTypeUid}/entries/${entryUid}?environment=development&locale=${this.locale}`,
+      `${this.apiBaseUrl}/content_types/${contentTypeUid}/entries/${entryUid}?environment=${this.environment}&locale=${this.locale}`,
       {
         method: "GET",
         headers,

@@ -17,9 +17,11 @@ const BATCH_INTERVAL_MS = 1_500; // could be 1000 but prefer to be safe
 
 export async function publishEntries({
   total,
+  contentTypeTitle,
   onEvery,
 }: {
   total: number;
+  contentTypeTitle: string;
   onEvery?: {
     entries: number;
     fn: (
@@ -29,7 +31,6 @@ export async function publishEntries({
     ) => Promise<void>;
   };
 }) {
-  const contentTypeTitle = "stress test 123";
   const contentTypeUid = contentTypeTitle.replace(/\s+/g, "-");
   const contentTypeResult = await client.createContentType({
     title: contentTypeTitle,
@@ -46,7 +47,7 @@ export async function publishEntries({
   let batch = [];
   let batchResult = [];
   for (let i = 1; i <= total; i++) {
-    const entryTitle = `${contentTypeTitle}-${crypto.randomUUID()}`;
+    const entryTitle = `${contentTypeUid}-${crypto.randomUUID()}`;
     batch.push(
       client.createEntry({
         title: entryTitle,

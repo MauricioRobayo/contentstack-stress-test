@@ -3,6 +3,7 @@ import client from "./contentstack-client";
 
 publishEntries({
   total: 10_000,
+  contentTypeTitle: "stress test 123",
   onEvery: {
     entries: 200,
     fn: onEveryFn,
@@ -14,17 +15,17 @@ async function onEveryFn(
   contentTypeUid: string,
   entriesSoFar: number
 ) {
-  const entryUid = entries.at(-1).entry.uid;
+  const lastEntryUid = entries.at(-1).entry.uid;
   const responseTimeWithoutCache = await getEntryResponseTime({
-    entryUid,
+    entryUid: lastEntryUid,
     contentTypeUid,
   });
   const responseTimeWithCache = await getEntryResponseTime({
-    entryUid,
+    entryUid: lastEntryUid,
     contentTypeUid,
   });
   console.log(
-    `${entriesSoFar},${responseTimeWithoutCache},${responseTimeWithCache}`
+    `${lastEntryUid},${entriesSoFar},${responseTimeWithoutCache},${responseTimeWithCache}`
   );
 }
 

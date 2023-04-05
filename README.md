@@ -1,9 +1,9 @@
 Copy [`.env.sample`](./.env.sample) to `.env`.
 
-**[publishEntries](./src/publish-entries.ts)**: script to create an publish X amount of entries into a Stack.
+**[publishEntries](./src/publish-entries.ts)**: script to create an publish X amount of entries into a Stack. It will create a new content type with a single `JSON rte` field and create/publish all entries using that content type.
 
 ```ts
-publishEntries({ total: 10_000 });
+publishEntries({ total: 10_000, contentTypeTitle: "Stress Test" });
 ```
 
 Optionally, you can run a custom function on every X amount of published entries:
@@ -11,6 +11,7 @@ Optionally, you can run a custom function on every X amount of published entries
 ```ts
 publishEntries({
   total: 10_000,
+  contentTypeTitle: "Stress Test",
   onEvery: {
     entries: 200,
     fn: (entries, contentTypeUid, entriesSoFar) => {

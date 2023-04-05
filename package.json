@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && node dist/index.js",
+    "measure-response-time": "tsc && node dist/measure-response-time.js",
     "build": "tsc"
   },
   "keywords": [],

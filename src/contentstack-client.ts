@@ -3,20 +3,28 @@ export class ContentstackClient {
   private readonly apiKey: string;
   private readonly managementToken: string;
   private readonly deliveryToken: string;
+  private readonly environment: string;
+  private readonly locale: string;
   private headers: Headers;
 
   constructor({
     apiKey,
     managementToken,
     deliveryToken,
+    environment,
+    locale,
   }: {
     apiKey: string;
     managementToken: string;
     deliveryToken: string;
+    environment: string;
+    locale: string;
   }) {
     this.apiKey = apiKey;
     this.managementToken = managementToken;
     this.deliveryToken = deliveryToken;
+    this.environment = environment;
+    this.locale = locale;
     this.headers = new Headers({
       api_key: this.apiKey,
       "content-type": "application/json",
@@ -92,11 +100,9 @@ export class ContentstackClient {
   async createEntry({
     title,
     contentTypeUid,
-    locale = "",
   }: {
     title: string;
     contentTypeUid: string;
-    locale?: string;
   }) {
     const payload = JSON.stringify({
       entry: {
@@ -165,7 +171,7 @@ export class ContentstackClient {
     headers.append("authorization", this.managementToken);
 
     const response = await fetch(
-      `${this.apiBaseUrl}/content_types/${contentTypeUid}/entries?locale=${locale}`,
+      `${this.apiBaseUrl}/content_types/${contentTypeUid}/entries?locale=${this.locale}`,
       {
         method: "POST",
         headers,
@@ -179,20 +185,16 @@ export class ContentstackClient {
   async publishEntry({
     contentTypeUid,
     entryUid,
-    environment,
-    locale,
   }: {
     contentTypeUid: string;
     entryUid: string;
-    environment: string;
-    locale: string;
   }) {
     const payload = JSON.stringify({
       entry: {
-        environments: [environment],
-        locales: [locale],
+        environments: [this.environment],
+        locales: [this.locale],
       },
-      locale: locale,
+      locale: this.locale,
       version: 1,
     });
     const headers = new Headers(this.headers);
@@ -213,17 +215,15 @@ export class ContentstackClient {
   async getEntry({
     entryUid,
     contentTypeUid,
-    locale = "",
   }: {
     entryUid: string;
     contentTypeUid: string;
-    locale?: string;
   }) {
     const headers = new Headers(this.headers);
     headers.append("access_token", this.deliveryToken);
 
     const response = await fetch(
-      `${this.apiBaseUrl}/content_types/${contentTypeUid}/entries/${entryUid}?environment=development&locale=${locale}`,
+      `${this.apiBaseUrl}/content_types/${contentTypeUid}/entries/${entryUid}?environment=development&locale=${this.locale}`,
       {
         method: "GET",
         headers,
@@ -238,4 +238,6 @@ export default new ContentstackClient({
   apiKey: process.env.CONTENTSTACK_API_KEY ?? "",
   managementToken: process.env.CONTENTSTACK_MANAGEMENT_TOKEN ?? "",
   deliveryToken: process.env.CONTENTSTACK_DELIVERY_TOKEN ?? "",
+  environment: process.env.CONTENTSTACK_ENVIRONMENT ?? "",
+  locale: process.env.CONTENTSTACK_LOCALE ?? "",
 });

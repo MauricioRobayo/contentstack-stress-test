@@ -23,10 +23,11 @@ export class ContentstackClient {
     });
   }
 
-  async createContentType(title: string) {
+  async createContentType({ title, uid }: { title: string; uid: string }) {
     const payload = JSON.stringify({
       content_type: {
         title,
+        uid,
         schema: [
           {
             display_name: "Title",
@@ -177,16 +178,18 @@ export class ContentstackClient {
 
   async getEntry({
     entryUid,
+    contentTypeUid,
     locale = "",
   }: {
     entryUid: string;
+    contentTypeUid: string;
     locale?: string;
   }) {
     const headers = new Headers(this.headers);
     headers.append("access_token", this.deliveryToken);
 
     const response = await fetch(
-      `${this.apiBaseUrl}/content_types/json_test_123/entries/${entryUid}?environment=development&locale=${locale}`,
+      `${this.apiBaseUrl}/content_types/${contentTypeUid}/entries/${entryUid}?environment=development&locale=${locale}`,
       {
         method: "GET",
         headers,

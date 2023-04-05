@@ -179,7 +179,14 @@ export class ContentstackClient {
       }
     );
 
-    return response.json();
+    const data = await response.json();
+
+    if ("error_code" in data) {
+      console.log(`Failed to create entry.`);
+      return null;
+    }
+
+    return data;
   }
 
   async publishEntry({
@@ -209,7 +216,14 @@ export class ContentstackClient {
       }
     );
 
-    return response.json();
+    const data = await response.json();
+
+    if ("error_code" in data) {
+      console.log(`Failed to create entry.`);
+      return null;
+    }
+
+    return data;
   }
 
   async getEntry({

@@ -4,8 +4,6 @@ dotenv.config();
 import client from "./contentstack-client";
 import crypto from "crypto";
 
-const FETCH_ENTRY_EVERY = 200;
-
 /*
   https://www.contentstack.com/docs/developers/apis/content-management-api/#rate-limiting
   Read (GET) requests: 10 requests per second per organization
@@ -56,12 +54,13 @@ export async function publishEntries({
     );
 
     if (batch.length >= BATCH_SIZE) {
-      const results = await Promise.all(batch);
+      const entries = await Promise.all(batch);
+      const successfulEntries = entries.filter(Boolean);
       if (onEvery) {
-        batchResult.push(...results);
+        batchResult.push(...successfulEntries);
       }
       await Promise.all(
-        results.map((result) =>
+        successfulEntries.map((result) =>
           client.publishEntry({
             entryUid: result.entry.uid,
             contentTypeUid,

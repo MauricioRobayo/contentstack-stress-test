@@ -37,8 +37,11 @@ async function getEntryResponseTime(options: {
   const start = performance.now();
   const data = await client.getEntry(options);
   if ("error_code" in data) {
-    console.log(JSON.stringify(data, null, 2));
-    throw new Error(`Failed to fetch entry ${options.entryUid}`);
+    console.log(
+      `Failed to fetch entry: '${options.entryUid}'`,
+      JSON.stringify(data, null, 2)
+    );
+    return null;
   }
   return performance.now() - start;
 }

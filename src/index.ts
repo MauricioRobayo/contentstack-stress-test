@@ -14,7 +14,7 @@ const TOTAL_ENTRIES = 10_000;
 */
 const BATCH_SIZE = 5; // could be 10 but prefer to be safe
 const BATCH_INTERVAL_MS = 1_500; // could be 1000 but prefer to be safe
-const FETCH_ENTRY_AFTER = 200;
+const FETCH_ENTRY_EVERY = 200;
 
 async function main() {
   const contentTypeTitle = "stress test 123";
@@ -59,7 +59,7 @@ async function main() {
       batch = [];
     }
 
-    if (batchResult.length > 0 && i % FETCH_ENTRY_AFTER === 0) {
+    if (batchResult.length > 0 && i % FETCH_ENTRY_EVERY === 0) {
       const entryUid = batchResult.at(-1).entry.uid;
       const responseTimeWithoutCache = await getEntryResponseTime({
         entryUid,

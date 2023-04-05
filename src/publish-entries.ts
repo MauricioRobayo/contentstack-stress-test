@@ -17,6 +17,7 @@ export async function publishEntries({
   total,
   contentTypeTitle,
   onEvery,
+  onFinish,
 }: {
   total: number;
   contentTypeTitle: string;
@@ -28,6 +29,7 @@ export async function publishEntries({
       entriesSoFar: number
     ) => Promise<void>;
   };
+  onFinish?: () => void;
 }) {
   const contentTypeUid = contentTypeTitle.replace(/\s+/g, "-");
   const contentTypeResult = await client.createContentType({
@@ -44,6 +46,8 @@ export async function publishEntries({
   }
   let batch = [];
   let batchResult = [];
+  let totalEntries = 0;
+
   for (let i = 1; i <= total; i++) {
     const entryTitle = `${contentTypeUid}-${crypto.randomUUID()}`;
     batch.push(
@@ -56,6 +60,7 @@ export async function publishEntries({
     if (batch.length >= BATCH_SIZE) {
       const entries = await Promise.all(batch);
       const successfulEntries = entries.filter(Boolean);
+      totalEntries += successfulEntries.length;
       if (onEvery) {
         batchResult.push(...successfulEntries);
       }
@@ -67,7 +72,7 @@ export async function publishEntries({
           })
         )
       );
-
+      console.log(`Total entries: ${totalEntries}`);
       await sleep(BATCH_INTERVAL_MS);
       batch = [];
     }
@@ -83,6 +88,9 @@ export async function publishEntries({
     await Promise.all(batch);
   }
 
+  if (onFinish) {
+    onFinish();
+  }
   process.exit(0);
 }
 

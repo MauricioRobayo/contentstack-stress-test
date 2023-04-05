@@ -182,6 +182,7 @@ export class ContentstackClient {
     const data = await response.json();
 
     if ("error_code" in data) {
+      console.log(JSON.stringify(data, null, 2));
       console.log(`Failed to create entry.`);
       return null;
     }
@@ -219,7 +220,8 @@ export class ContentstackClient {
     const data = await response.json();
 
     if ("error_code" in data) {
-      console.log(`Failed to create entry.`);
+      console.log(`Failed to publish entry.`);
+      console.log(JSON.stringify(data, null, 2));
       return null;
     }
 

@@ -1,11 +1,31 @@
-Create a delivery token and a management token and add them to your `.env`. Check [`.env.sample`](./.env.sample)
+Copy [`.env.sample`](./.env.sample) to `.env`.
 
-Install dependencies and run the `start` script: `yarn start` or your preferred package manager.
+**[publishEntries](./src/publish-entries.ts)**: script to create an publish X amount of entries into a Stack.
 
-The script will create a webpage entry type with a `JSON rte` field, and then will start creating entries in batches.
+```ts
+publishEntries({ total: 10_000 });
+```
 
-It will report back the results of fetching two times the last entry added every 1000 entries.
+Optionally, you can run a custom function on every X amount of published entries:
 
-Once the script is running you can check in contentstack the total entries that have been created so far by refreshing the entries tab.
+```ts
+publishEntries({
+  total: 10_000,
+  onEvery: {
+    entries: 200,
+    fn: (entries, contentTypeUid, entriesSoFar) => {
+      console.log(entries, contentTypeUid, entriesSoFar);
+    },
+  },
+});
+```
 
-Be patient!
+**[measure-response-time](./src/measure-response-time.tsx)]**: script that will create and publish 10.000 entries, and will run the time it takes to perform a fetch request every time 200 entries has been added.
+
+There is a npm script to run this test:
+
+```
+npm run measure-response-time
+```
+
+It will output three values separated by commas every 200 entries: `entries so far`, `response time without cache`, `response time with cache`.

@@ -12,11 +12,12 @@ import client from "./contentstack-client";
 const BATCH_SIZE = 5; // could be 10 but prefer to be safe
 const BATCH_INTERVAL_MS = 1_500; // could be 1000 but prefer to be safe
 
-export async function publishEntries({
+export async function createEntries({
   total,
   contentTypeTitle,
   onEvery,
-  logProgress = true,
+  logProgress = false,
+  publishEntries = false,
 }: {
   total: number;
   contentTypeTitle: string;
@@ -29,6 +30,7 @@ export async function publishEntries({
     ) => Promise<void>;
   };
   logProgress?: boolean;
+  publishEntries?: boolean;
 }) {
   const contentTypeUid = contentTypeTitle.replace(/\s+/g, "-");
   const contentTypeResult = await client.createContentType({
@@ -63,14 +65,16 @@ export async function publishEntries({
       if (onEvery) {
         batchResult.push(...successfulEntries);
       }
-      await Promise.all(
-        successfulEntries.map((result) =>
-          client.publishEntry({
-            entryUid: result.entry.uid,
-            contentTypeUid,
-          })
-        )
-      );
+      if (publishEntries) {
+        await Promise.all(
+          successfulEntries.map((result) =>
+            client.publishEntry({
+              entryUid: result.entry.uid,
+              contentTypeUid,
+            })
+          )
+        );
+      }
       if (logProgress) {
         console.log(`Total entries created: ${totalEntries}`);
       }

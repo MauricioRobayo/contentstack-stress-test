@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "populate-entries": "tsc && node dist/populate-entries.js",
     "measure-response-time": "tsc && node dist/measure-response-time.js",
     "build": "tsc"
   },

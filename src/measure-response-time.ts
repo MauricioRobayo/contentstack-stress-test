@@ -1,7 +1,7 @@
-import { publishEntries } from "./publish-entries";
+import { createEntries } from "./create-entries";
 import client from "./contentstack-client";
 
-publishEntries({
+createEntries({
   total: 50_000,
   contentTypeTitle: "st-123",
   onEvery: {
@@ -9,6 +9,7 @@ publishEntries({
     fn: onEveryFn,
   },
   logProgress: false,
+  publishEntries: true,
 });
 
 async function onEveryFn(

@@ -1,1 +1,1 @@
-import { publishEntries } from "./publish-entries";
+export { createEntries } from "./create-entries";
